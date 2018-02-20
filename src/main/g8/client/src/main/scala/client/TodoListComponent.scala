@@ -2,7 +2,7 @@ package client
 
 import java.time.Clock
 
-import chandu0101.scalajs.react.components.materialui._
+import chandu0101.scalajs.react.components.elementalui._
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.component.Scala.Unmounted
 import japgolly.scalajs.react.extra.StateSnapshot
@@ -26,24 +26,24 @@ object TodoListComponent {
 
   final class Backend(scope: BackendScope[Props, State]) {
 
-    private val colNames = MuiTableRow()(
-      MuiTableHeaderColumn()("ID"),
-      MuiTableHeaderColumn()("Description"),
-      MuiTableHeaderColumn()("Is Completed"),
-      MuiTableHeaderColumn()("Created At"),
-      MuiTableHeaderColumn()()
+    private val colNames = Row()(
+      Col(xs = "1/5")(Card()("ID")),
+      Col(xs = "1/5")(Card()("Description")),
+      Col(xs = "1/5")(Card()("Is Completed")),
+      Col(xs = "1/5")(Card()("Created At")),
+      Col(xs = "1/5")()
     )
 
     private def withSpanTitle(string: String) = <.span(^.title := string, string)
 
-    private def renderRow(todo: Todo): VdomNode = MuiTableRow(key = todo.id.toString)(
-      MuiTableRowColumn()(withSpanTitle(todo.id.toString)),
-      MuiTableRowColumn()(withSpanTitle(todo.description)),
-      MuiTableRowColumn()(withSpanTitle(todo.isCompleted.toString)),
-      MuiTableRowColumn()(withSpanTitle(todo.createdAt.toString)),
-      MuiTableRowColumn()(
-        MuiFlatButton(label = "Update", onClick = openDialog(todo))(),
-        MuiFlatButton(label = "Delete", onClick = handleDelete(todo.id))()
+    private def renderRow(todo: Todo): VdomNode = Row(key = todo.id.toString)(
+      Col(xs = "1/5")(withSpanTitle(todo.id.toString)),
+      Col(xs = "1/5")(withSpanTitle(todo.description)),
+      Col(xs = "1/5")(withSpanTitle(todo.isCompleted.toString)),
+      Col(xs = "1/5")(withSpanTitle(todo.createdAt.toString)),
+      Col(xs = "1/5")(
+        Button(onClick = openDialog(todo))("Update"),
+        Button(onClick = handleDelete(todo.id))("Delete")
       )
     )
 
@@ -55,33 +55,18 @@ object TodoListComponent {
 
     private def renderRows(todos: List[Todo]): List[VdomNode] = todos.sortBy(_.createdAt).map(renderRow)
 
-    def render(p: Props, s: State): VdomElement = {
+    def render(p: Props, s: State): VdomElement = <.div(
       <.div(
-        MuiTable(
-          height = "600px",
-          fixedHeader = true,
-          fixedFooter = true,
-          selectable = false,
-          multiSelectable = false
-        )(
-          MuiTableHeader(enableSelectAll = false, adjustForCheckbox = false, displaySelectAll = false)(
-            colNames
-          ),
-          MuiTableBody(stripedRows = true, showRowHover = true, displayRowCheckbox = false)(
-            renderRows(p.snapshot.value): _*
-          ),
-          MuiTableFooter(adjustForCheckbox = false)(
-            colNames
-          )
-        ),
-        MuiRaisedButton(label = "Create", onClick = openDialog(Todo.newTodo(p.clock)))(),
-        s.createOrUpdate.fold[VdomElement](<.div())(todo => TodoEditorComponent(TodoEditorComponent.Props(
-          snapshot = StateSnapshot(todo)(s => scope.modState(_.copy(createOrUpdate = Some(s)))),
-          submit = s => scope.props.flatMap(_.createOrUpdate(s)),
-          close = scope.modState(_.copy(createOrUpdate = None))
-        )))
-      )
-    }
+        colNames,
+        <.div(renderRows(p.snapshot.value): _*)
+      ),
+      Button(onClick = openDialog(Todo.newTodo(p.clock)))("Create"),
+      s.createOrUpdate.fold[VdomElement](<.div())(todo => TodoEditorComponent(TodoEditorComponent.Props(
+        snapshot = StateSnapshot(todo)(s => scope.modState(_.copy(createOrUpdate = Some(s)))),
+        submit = s => scope.props.flatMap(_.createOrUpdate(s)),
+        close = scope.modState(_.copy(createOrUpdate = None))
+      )))
+    )
   }
 
   private val component = ScalaComponent

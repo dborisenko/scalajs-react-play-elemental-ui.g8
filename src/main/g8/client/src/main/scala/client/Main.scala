@@ -9,25 +9,15 @@ import scala.scalajs.js.annotation.{ JSExportTopLevel, JSImport }
 import scalacss.ProdDefaults._
 import scalacss.ScalaCssReact._
 
-@JSImport("material-ui", JSImport.Namespace, "MaterialUi")
+@JSImport("elemental", JSImport.Namespace, "Elemental")
 @js.native
-object MaterialUi extends js.Object
-
-@JSImport("material-ui/styles", JSImport.Namespace, "MaterialUiStyles")
-@js.native
-object MaterialUiStyles extends js.Object
-
-@JSImport("material-ui/svg-icons/index", JSImport.Namespace, "MaterialUiSvgIcons")
-@js.native
-object MaterialUiSvgIcons extends js.Object
+object Elemental extends js.Object
 
 @JSExportTopLevel("Main")
 object Main {
   GlobalStyles.addToDocument()
-  // This is needed to mount material-ui library into `mui` JavaScript global variable (mui = require("material-ui"))
-  js.Dynamic.global.mui = MaterialUi
-  js.Dynamic.global.mui.Styles = MaterialUiStyles
-  js.Dynamic.global.mui.SvgIcons = MaterialUiSvgIcons
+  // This is needed to mount elemental library into `elemental` JavaScript global variable (elemental = require("elemental"))
+  js.Dynamic.global.elemental = Elemental
 
   private val service: ApplicationService = new ApplicationService
   private val clock: Clock = Clock.systemUTC()

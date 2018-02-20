@@ -19,8 +19,8 @@ object Dependencies extends DependencyBuilders {
     val `scalajs-dom` = "0.9.4"
     val `scalajs-react-components` = "0.8.0"
     val react = "15.6.1"
-    val `material-ui` = "0.20.0"
-    val `react-tap-event-plugin` = "2.0.1"
+    val elemental = "0.6.1"
+    val `react-addons-css-transition-group` = "15.6.2"
   }
 
   val paradise = "org.scalamacros" % "paradise" % Versions.paradise
@@ -41,6 +41,6 @@ object Dependencies extends DependencyBuilders {
 
   val react: NpmDependency = "react" -> Versions.react
   val `react-dom`: NpmDependency = "react-dom" -> Versions.react
-  val `material-ui`: NpmDependency = "material-ui" -> Versions.`material-ui`
-  val `react-tap-event-plugin`: NpmDependency = "react-tap-event-plugin" -> Versions.`react-tap-event-plugin`
+  val elemental: NpmDependency = "elemental" -> Versions.elemental
+  val `react-addons-css-transition-group`: NpmDependency = "react-addons-css-transition-group" -> Versions.`react-addons-css-transition-group`
 }

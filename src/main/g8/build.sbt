@@ -52,8 +52,8 @@ lazy val client = (project in file("client"))
     npmDependencies in Compile ++= Seq(
       Dependencies.react,
       Dependencies.`react-dom`,
-      Dependencies.`material-ui`,
-      Dependencies.`react-tap-event-plugin`
+      Dependencies.elemental,
+      Dependencies.`react-addons-css-transition-group`
     ),
     emitSourceMaps := false
   )

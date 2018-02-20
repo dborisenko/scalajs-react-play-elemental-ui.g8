@@ -2,14 +2,12 @@ package client
 
 import java.time.Clock
 
-import chandu0101.scalajs.react.components.Implicits._
-import chandu0101.scalajs.react.components.materialui.MuiSvgIcon._
-import chandu0101.scalajs.react.components.materialui.{ DeterminateIndeterminate, Mui, MuiLinearProgress, MuiMuiThemeProvider, MuiSnackbar }
+import chandu0101.scalajs.react.components.elementalui._
 import client.Message.{ ErrorMessage, InfoMessage, NoMessage }
 import japgolly.scalajs.react.component.Scala.Unmounted
 import japgolly.scalajs.react.extra.StateSnapshot
 import japgolly.scalajs.react.vdom.html_<^._
-import japgolly.scalajs.react.{ BackendScope, Callback, CallbackTo, ReactTouchEvent, ScalaComponent }
+import japgolly.scalajs.react.{ BackendScope, Callback, CallbackTo, ScalaComponent }
 import model.Todo
 import model.Todo.TodoId
 
@@ -89,29 +87,21 @@ object MainComponent {
       ))
 
     def render(p: Props, s: Option[State]): VdomElement = {
-      val closeMessageBox: Callback = scope.modState(_.map(_.copy(message = NoMessage)))
-      MuiMuiThemeProvider()(
-        s.fold[VdomElement](MuiLinearProgress(mode = DeterminateIndeterminate.indeterminate)()) { state =>
-          <.div(
-            renderSubComponent(StateSnapshot(state.todos)(ns => scope.modState(_.map(_.copy(todos = ns)))), p),
-            MuiSnackbar(
-              autoHideDuration = 60000,
-              message = state.message match {
-                case NoMessage => ""
-                case ErrorMessage(error) => <.div(
-                  Mui.SvgIcons.ActionPanTool.apply(color = Mui.Styles.colors.redA700)(),
-                  "Error: " + error
-                )
-                case InfoMessage(info) => info
-              },
-              action = "Close",
-              onRequestClose = (_: String) => closeMessageBox,
-              onActionTouchTap = (_: ReactTouchEvent) => closeMessageBox,
-              open = state.message.isDisplayable
-            )()
-          )
-        }
-      )
+      s.fold[VdomElement](Spinner(size = SpinnerSize.LG)()) { state =>
+        <.div(
+          state.message match {
+            case NoMessage => ""
+            case ErrorMessage(error) =>
+              Alert(`type` = AlertType.DANGER)(
+                Glyph(icon = Octicons.alert, `type` = GlyphType.DANGER)(), <.strong("Error: "),
+                error
+              )
+            case InfoMessage(info) =>
+              Alert(`type` = AlertType.SUCCESS)(info)
+          },
+          renderSubComponent(StateSnapshot(state.todos)(ns => scope.modState(_.map(_.copy(todos = ns)))), p)
+        )
+      }
     }
   }
 

@@ -1,12 +1,11 @@
 package client
 
-import chandu0101.scalajs.react.components.Implicits._
-import chandu0101.scalajs.react.components.materialui.{ MuiCheckbox, MuiDialog, MuiFlatButton, MuiTextField }
+import chandu0101.scalajs.react.components.elementalui._
 import japgolly.scalajs.react.component.Scala.Unmounted
 import japgolly.scalajs.react.extra.StateSnapshot
+import japgolly.scalajs.react.vdom.VdomElement
 import japgolly.scalajs.react.vdom.html_<^._
-import japgolly.scalajs.react.vdom.{ VdomElement, VdomNode }
-import japgolly.scalajs.react.{ BackendScope, Callback, ReactEvent, ReactEventFromInput, ReactMouseEvent, ScalaComponent }
+import japgolly.scalajs.react.{ BackendScope, Callback, ReactEventFromHtml, ReactEventFromInput, ScalaComponent }
 import model.Todo
 
 object TodoEditorComponent {
@@ -25,42 +24,63 @@ object TodoEditorComponent {
 
     private def modState(f: Todo => Todo): Callback = scope.props.flatMap(_.snapshot.modState(f))
 
-    private def actions(todo: Todo): VdomNode = <.div(
-      MuiFlatButton(key = "cancel", label = "Cancel", secondary = true, onClick = handleDialogCancel)(),
-      MuiFlatButton(key = "submit", label = "Submit", secondary = true, onClick = handleDialogSubmit(todo))()
-    )
+    private val handleDialogCancel: ReactEventFromHtml => Callback = _ => close
 
-    private val handleDialogCancel: ReactEvent => Callback = _ => close
+    private def handleDialogSubmit(todo: Todo): ReactEventFromHtml => Callback = _ => submit(todo) >> close
 
-    private def handleDialogSubmit(todo: Todo): ReactEvent => Callback = _ => submit(todo) >> close
+    private def onInputChange(f: (Todo, String) => Todo) = (event: ReactEventFromInput) =>
+      modState(f(_, event.target.value))
 
-    private def onInputChange(f: (Todo, String) => Todo) = (_: ReactEventFromInput, newValue: String) =>
-      modState(f(_, newValue))
-
-    private val onIsCompletedSwitch: (ReactMouseEvent, Boolean) => Callback =
-      (_, isCompleted) => modState(_.copy(isCompleted = isCompleted))
+    private val onIsCompletedSwitch: ReactEventFromHtml => Callback =
+      _ => modState(v => v.copy(isCompleted = !v.isCompleted))
 
     def render(props: Props): VdomElement = {
       val todo = props.snapshot.value
-      MuiDialog(
-        title = "To Do:",
-        actions = actions(todo),
-        open = true,
-        modal = true
-      )(
-          <.div(
-            ^.display.flex,
-            ^.flexDirection.column,
+      <.div(
+        Modal(
+          isOpen = true,
+          backdropClosesModal = true,
+          onCancel = handleDialogCancel
+        )(
+          ModalHeader(text = "To Do")(),
+          ModalBody()(
             <.div(
-              MuiTextField(floatingLabelText = "ID", disabled = true, value = todo.id.toString)(),
-              <.br(),
-              MuiTextField(floatingLabelText = "Description", value = todo.description,
-                onChange = onInputChange((s, n) => s.copy(description = n)), multiLine = true)()
-            ),
-            MuiCheckbox(name = "isCompleted", value = "isCompleted", label = "Is Completed", checked = todo.isCompleted,
-              onCheck = onIsCompletedSwitch)()
+              ^.display.flex,
+              ^.flexDirection.column,
+              <.div(
+                FormField(label = "ID")(
+                  FormInput(
+                    label = "ID",
+                    `type` = "text",
+                    name = "id",
+                    disabled = true,
+                    value = todo.id.toString
+                  )()
+                )(),
+                FormField(label = "Description")(
+                  FormInput(
+                    label = "Description",
+                    `type` = "text",
+                    name = "description",
+                    value = todo.description,
+                    autoFocus = true,
+                    placeholder = "Description",
+                    multiline = true,
+                    onChange = onInputChange((s, n) => s.copy(description = n))
+                  )()
+                )(),
+                FormField()(
+                  CheckBox(label = "Is Completed", onclick = onIsCompletedSwitch)()
+                )
+              )
+            )
           )
+        ),
+        ModalFooter()(
+          Button(onClick = handleDialogCancel, `type` = ButtonType.PRIMARY)("Submit"),
+          Button(onClick = handleDialogSubmit(todo), `type` = ButtonType.LINK_CANCEL)("Cancel")
         )
+      )
     }
   }
 
