@@ -55,7 +55,8 @@ lazy val client = (project in file("client"))
       Dependencies.elemental,
       Dependencies.`react-addons-css-transition-group`
     ),
-    emitSourceMaps := false
+    emitSourceMaps := false,
+    requiresDOM := true
   )
   .dependsOn(`shared-js`)
 
