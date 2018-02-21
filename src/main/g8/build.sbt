@@ -1,3 +1,4 @@
+
 inThisBuild(List(
   scalaVersion := Dependencies.Versions.scala,
   scalacOptions := Seq(
@@ -72,14 +73,17 @@ lazy val server = (project in file("server"))
       Dependencies.`scala-guice`.value,
       Dependencies.ficus.value,
       Dependencies.`play-circe`.value,
-      Dependencies.scalatest.value % Test
+      Dependencies.scalatest.value % Test,
+      Dependencies.`webjars-elemental`.value % Provided
     )).value,
     // triggers scalaJSPipeline when using compile or continuous compilation
     compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
     // connect to the client project
     scalaJSProjects := Seq(client),
     pipelineStages in Assets := Seq(scalaJSPipeline),
-    pipelineStages := Seq(digest, gzip)
+    pipelineStages := Seq(digest, gzip),
+    // compress CSS
+    LessKeys.compress in Assets := true
   )
   .aggregate(client)
   .dependsOn(`shared-jvm`)

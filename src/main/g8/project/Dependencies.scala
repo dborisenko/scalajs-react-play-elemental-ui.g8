@@ -39,6 +39,8 @@ object Dependencies extends DependencyBuilders {
   val `scalajs-dom` = Def.setting("org.scala-js" %%% "scalajs-dom" % Versions.`scalajs-dom`)
   val `scalajs-react-components` = Def.setting("com.olvind" %%% "scalajs-react-components" % Versions.`scalajs-react-components`)
 
+  val `webjars-elemental` = Def.setting("org.webjars.npm" % "elemental" % Versions.elemental)
+
   val react: NpmDependency = "react" -> Versions.react
   val `react-dom`: NpmDependency = "react-dom" -> Versions.react
   val elemental: NpmDependency = "elemental" -> Versions.elemental

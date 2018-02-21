@@ -27,3 +27,6 @@ addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.2")
 
 // Module bundler for Scala.js projects that use NPM packages.
 addSbtPlugin("ch.epfl.scala" % "sbt-web-scalajs-bundler" % "0.9.0")
+
+// allows less to be used from within sbt
+addSbtPlugin("com.typesafe.sbt" % "sbt-less" % "1.1.2")
