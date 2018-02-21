@@ -1,5 +1,7 @@
 # Client-server application template with Scala.js, React, Elemental-UI and Play
 
+[![Build status](https://travis-ci.org/dborisenko/scalajs-react-play-elemental-ui.g8.svg?branch=master)](https://travis-ci.org/dborisenko/scalajs-react-play-elemental-ui.g8)
+
 With this template you can easily start to develop client-server application with *Scala.js*, *React* and *Elemental-UI* on the client side and *Play* on the server side. *Circe* is used for serialization of data between client and server. 
 
 Template is implemented in the form of TODO application example.
