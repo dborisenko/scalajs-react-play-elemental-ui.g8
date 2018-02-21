@@ -74,11 +74,11 @@ object TodoEditorComponent {
                 )
               )
             )
+          ),
+          ModalFooter()(
+            Button(onClick = handleDialogSubmit(todo), `type` = ButtonType.PRIMARY, submit = true)("Submit"),
+            Button(onClick = handleDialogCancel, `type` = ButtonType.LINK_CANCEL, submit = false)("Cancel")
           )
-        ),
-        ModalFooter()(
-          Button(onClick = handleDialogCancel, `type` = ButtonType.PRIMARY)("Submit"),
-          Button(onClick = handleDialogSubmit(todo), `type` = ButtonType.LINK_CANCEL)("Cancel")
         )
       )
     }

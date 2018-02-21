@@ -26,24 +26,26 @@ object TodoListComponent {
 
   final class Backend(scope: BackendScope[Props, State]) {
 
-    private val colNames = Row()(
-      Col(xs = "1/5")(Card()("ID")),
-      Col(xs = "1/5")(Card()("Description")),
-      Col(xs = "1/5")(Card()("Is Completed")),
-      Col(xs = "1/5")(Card()("Created At")),
-      Col(xs = "1/5")()
+    private val colNames = <.thead(
+      <.tr(
+        <.th("ID"),
+        <.th("Description"),
+        <.th("Is Completed"),
+        <.th("Created At"),
+        <.th()
+      )
     )
 
     private def withSpanTitle(string: String) = <.span(^.title := string, string)
 
-    private def renderRow(todo: Todo): VdomNode = Row(key = todo.id.toString)(
-      Col(xs = "1/5")(withSpanTitle(todo.id.toString)),
-      Col(xs = "1/5")(withSpanTitle(todo.description)),
-      Col(xs = "1/5")(withSpanTitle(todo.isCompleted.toString)),
-      Col(xs = "1/5")(withSpanTitle(todo.createdAt.toString)),
-      Col(xs = "1/5")(
-        Button(onClick = openDialog(todo))("Update"),
-        Button(onClick = handleDelete(todo.id))("Delete")
+    private def renderRow(todo: Todo): VdomNode = <.tr(
+      <.td(withSpanTitle(todo.id.toString)),
+      <.td(withSpanTitle(todo.description)),
+      <.td(withSpanTitle(todo.isCompleted.toString)),
+      <.td(withSpanTitle(todo.createdAt.toString)),
+      <.td(
+        Button(onClick = openDialog(todo), `type` = ButtonType.LINK)("Update"),
+        Button(onClick = handleDelete(todo.id), `type` = ButtonType.LINK_DELETE)("Delete")
       )
     )
 
@@ -53,12 +55,12 @@ object TodoListComponent {
 
     private def openDialog(todo: Todo): ReactEvent => Callback = _ => open(todo)
 
-    private def renderRows(todos: List[Todo]): List[VdomNode] = todos.sortBy(_.createdAt).map(renderRow)
+    private def renderRows(todos: List[Todo]): VdomNode = <.tbody(todos.sortBy(_.createdAt).map(renderRow): _*)
 
     def render(p: Props, s: State): VdomElement = <.div(
-      <.div(
+      Table()(
         colNames,
-        <.div(renderRows(p.snapshot.value): _*)
+        renderRows(p.snapshot.value)
       ),
       Button(onClick = openDialog(Todo.newTodo(p.clock)))("Create"),
       s.createOrUpdate.fold[VdomElement](<.div())(todo => TodoEditorComponent(TodoEditorComponent.Props(
